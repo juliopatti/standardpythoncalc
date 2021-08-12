@@ -13,9 +13,16 @@
 # limitations under the License.
 # [START gae_python38_app]
 # [START gae_python3_app]
+
 # A partir do hello word, da documentação em https://cloud.google.com/appengine/docs/standard/python3/runtime
 # e do guia para iniciantes em https://github.com/h4k1m0u/pythonbeginner.org/blob/master/examples/python-flask-web-calculator.py
 # foi montados os primeiros main.py, requirements.txt e app.yaml
+# o app.yaml foi adaptado para solicitar um novo serviço e passou a se chamar calculadora.yaml
+# versão 2
+# um html diretriz foi criado para orientação do usuário
+# uma verificação forte de validade da expressão segundo a leitura da função conversora eval() 
+# foi realizada para corrigir os erros de conversão da função eval
+# tendo o resultado desejado, sem erros de conversão, validação da entrada e da expressão lógica
 
 from flask import Flask, request
 
@@ -34,14 +41,82 @@ def index():
         return '''
             <form method="post">
                 <input type="text" name="expression" />
-                <input type="submit" value="Calculate" />
+                <input type="submit" value="Calcular" />
+                <p>Entre com uma expressão matemática:<p/>
+                <html>
+                <head>
+                <style>
+                table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 42%;
+                }
+
+                td, th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+                }
+
+                tr:nth-child(even) {
+                background-color: #dddddd;
+                }
+                </style>
+                </head>
+                <body>
+
+                <h2>Simbologia de operadores: </h2>
+
+                <table>
+                <tr>
+                    <th>Símbolo</th>
+                    <th>Operação</th>
+                </tr>
+                <tr>
+                    <td>+</td>
+                    <td>Adição</td>
+                </tr>
+                <tr>
+                    <td>-</td>
+                    <td>Subtração</td>
+                </tr>
+                <tr>
+                    <td>*</td>
+                    <td>Multiplicação</td>
+                </tr>
+                <tr>
+                    <td>/</td>
+                    <td>Divisão</td>
+                </tr>
+                <tr>
+                    <td>**</td>
+                    <td>Exponenciação</td>
+                </tr>
+                <tr>
+                    <td>()</td>
+                    <td>Prioridade</td>
+                </tr>
+                </table>
+
+                </body>
+                </html>
             </form>
         '''
     elif request.method == 'POST':
         # calculate result
         expression = request.form.get('expression')
-        result = eval(expression)
-        return 'result: %s' % result
+        n=int(len(expression))
+        for i in range(0,n):
+            if expression[i] in '0123456789+-*/.( )':
+                True
+            else:
+                expression = 'Erro de entrada'
+                break
+        try:
+            result = eval(expression)
+            return 'Resultado: %s' % result
+        except:
+            return 'Expressão Inválida!'
 
 if __name__ == '__main__': 
     app.run(debug=True)
